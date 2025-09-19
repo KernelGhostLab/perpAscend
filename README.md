@@ -1,9 +1,12 @@
 # PerpAscent Protocol
 
-A next-generation **permissionless perpetual futures platform** built on Solana infrastructure, featuring advanced liquidation mechanics, real-time oracle integration, and a sophisticated trading interface.
+A next-generation **open source permissionless perpetual futures platform** built on Solana infrastructure, featuring advanced liquidation mechanics, real-time oracle integration, and a sophisticated trading interface.
+
+**🤝 This is a fully open source project - everyone is invited to collaborate, contribute, and help shape the future of decentralized perpetual futures trading!**
 
 ## 🌟 Features
 
+- **🔓 Open Source & Collaborative** - Fully transparent codebase, welcoming all contributors
 - **🔒 Permissionless Trading** - No KYC required, fully decentralized
 - **⚡ Solana-Powered** - Lightning-fast transactions with low fees
 - **📊 Real-time Price Feeds** - Advanced oracle integration for accurate pricing
