@@ -1,4 +1,4 @@
-# PerpAscent Protocol
+# PerpAscend Protocol
 
 A next-generation **open source permissionless perpetual futures platform** built on Solana infrastructure, featuring advanced liquidation mechanics, real-time oracle integration, and a sophisticated trading interface.
 
@@ -42,7 +42,7 @@ A next-generation **open source permissionless perpetual futures platform** buil
 ### Quick Setup
 ```bash
 # Clone the repository
-git clone https://github.com/onchaincreator/PerpAscent-Protocol.git
+git clone https://github.com/onchaincreator/PerpAscend-Protocol.git
 
 # Install dependencies
 npm install
