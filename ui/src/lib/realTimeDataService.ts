@@ -1,4 +1,4 @@
-// Real-time data service for PerpAscent protocol
+// Real-time data service for PerpAscend protocol
 import React from 'react';
 import { Connection, PublicKey } from '@solana/web3.js';
 

@@ -12,7 +12,7 @@ export const RealTimeDemo: React.FC = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            PerpAscent - Real-Time Data Integration Demo
+            PerpAscend - Real-Time Data Integration Demo
           </h1>
           
           {/* Real-Time Data Controls */}

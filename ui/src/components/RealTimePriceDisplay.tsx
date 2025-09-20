@@ -1,17 +1,38 @@
-// Real-Time Price Display Component
+// Real-Time Price Display Component with WebSocket Integration
 import React from 'react';
 import { useRealTimePrices } from '../lib/realTimeDataService';
+import useEnhancedRealTimePrices from '../hooks/useEnhancedRealTimePrices';
 
 interface RealTimePriceDisplayProps {
   symbols: string[];
-  method?: 'coingecko' | 'binance' | 'jupiter';
+  method?: 'websocket' | 'coingecko' | 'hybrid';
 }
 
 export const RealTimePriceDisplay: React.FC<RealTimePriceDisplayProps> = ({ 
   symbols, 
-  method = 'coingecko' 
+  method = 'hybrid'
 }) => {
-  const { prices, isLoading, error } = useRealTimePrices(symbols, method);
+  
+  // Use enhanced hook for WebSocket support, fallback to original for coingecko-only
+  const enhancedData = useEnhancedRealTimePrices(symbols, { 
+    method,
+    fallbackEnabled: true,
+    updateInterval: 30000
+  });
+  
+  const legacyData = useRealTimePrices(symbols, method === 'coingecko' ? 'coingecko' : 'coingecko');
+  
+  // Choose which data source to use
+  const isUsingEnhanced = method === 'websocket' || method === 'hybrid';
+  const { 
+    prices, 
+    isLoading, 
+    error,
+    isWebSocketActive = false
+  } = isUsingEnhanced ? enhancedData : { 
+    ...legacyData, 
+    isWebSocketActive: false
+  };
 
   if (isLoading) {
     return (
@@ -48,11 +69,19 @@ export const RealTimePriceDisplay: React.FC<RealTimePriceDisplayProps> = ({
     <div className="bg-white rounded-lg p-4 shadow">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Live Prices</h3>
-        <div className="flex items-center text-xs text-gray-500">
-          <div className="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></div>
-          Live via {method}
+        <div className="flex items-center space-x-2">
+          {/* Simple Status Indicator */}
+          {isUsingEnhanced && (
+            <div className="flex items-center text-xs text-gray-500">
+              <div className={`w-2 h-2 rounded-full mr-1 ${
+                isWebSocketActive ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
+              }`}></div>
+              {isWebSocketActive ? 'Live' : 'Updating'}
+            </div>
+          )}
         </div>
       </div>
+
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {symbols.map((symbol) => {

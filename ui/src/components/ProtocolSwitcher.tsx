@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
@@ -95,7 +95,7 @@ export const ProtocolSwitcher: React.FC<ProtocolSwitcherProps> = ({
               <>
                 <p>• Connected to Solana devnet</p>
                 <p>• Real transactions with fees</p>
-                <p>• PerpAscent Program ID: HSMR...r1gj</p>
+                <p>• PerpAscend Program ID: HSMR...r1gj</p>
               </>
             ) : (
               <>

@@ -1,4 +1,4 @@
-// Mock PerpAscent Protocol for UI testing
+// Mock PerpAscend Protocol for UI testing
 export interface Market {
   symbol: string;
   baseDecimals: number;

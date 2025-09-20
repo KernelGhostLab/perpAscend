@@ -1,4 +1,4 @@
-# 🚀 PerpAscent Protocol - Advanced Testing Roadmap
+# 🚀 PerpAscend Protocol - Advanced Testing Roadmap
 
 ## 🎯 **Current Status: MAJOR BREAKTHROUGH ACHIEVED!**
 

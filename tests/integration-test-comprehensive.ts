@@ -17,7 +17,7 @@ import {
 } from "@solana/spl-token";
 import { expect } from "chai";
 
-describe("PerpAscent Protocol - Comprehensive Integration Tests", () => {
+describe("PerpAscend Protocol - Comprehensive Integration Tests", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const program = anchor.workspace.SolanaPerpslywheel as Program<SolanaPerpslywheel>;

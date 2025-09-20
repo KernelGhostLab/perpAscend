@@ -1,11 +1,11 @@
 import * as anchor from "@coral-xyz/anchor";
 import { expect } from "chai";
 
-describe("PerpAscent Protocol - Test Summary", () => {
+describe("PerpAscend Protocol - Test Summary", () => {
 
   it("🎯 COMPREHENSIVE TEST REPORT", () => {
     console.log("\n" + "=".repeat(60));
-    console.log("           PERPASCENT PROTOCOL TEST RESULTS           ");
+    console.log("           PERPASCEND PROTOCOL TEST RESULTS           ");
     console.log("=".repeat(60));
     
     console.log("\n📋 PROJECT OVERVIEW:");

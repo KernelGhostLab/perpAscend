@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { mockProtocol, Market, Position, Trade } from './lib/mockProtocol';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRealSolanaProtocol } from './lib/realSolanaProtocol';
 import { ProtocolSwitcher } from './components/ProtocolSwitcher';
 import { AdvancedPositionManager } from './components/AdvancedPositionManager';
-import { StopLossManager, StopLossOrder } from './components/StopLossManager';
+import { StopLossOrder } from './components/StopLossManager';
 import { RealTimePriceDisplay } from './components/RealTimePriceDisplay';
+import { OrderDashboard } from './components/OrderDashboard';
 
 // Header Component
 const Header = () => {
@@ -49,9 +50,32 @@ const App: React.FC = () => {
   const [stopLossOrders, setStopLossOrders] = useState<StopLossOrder[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const [useRealProtocol, setUseRealProtocol] = useState(false);
+  const [autoExecutionEnabled, setAutoExecutionEnabled] = useState(false);
   
   const { connected } = useWallet();
   const { protocol: realProtocol } = useRealSolanaProtocol();
+
+  const handleBulkCancel = useCallback(async (orderIds: string[]) => {
+    setStopLossOrders(prevOrders => 
+      prevOrders.map(order => 
+        orderIds.includes(order.id)
+          ? { ...order, status: 'cancelled' as const }
+          : order
+      )
+    );
+    console.log('Bulk cancel:', orderIds);
+  }, []);
+
+  const handleBulkExecute = useCallback(async (orderIds: string[]) => {
+    setStopLossOrders(prevOrders => 
+      prevOrders.map(order => 
+        orderIds.includes(order.id)
+          ? { ...order, status: 'triggered' as const, triggeredAt: Date.now() }
+          : order
+      )
+    );
+    console.log('Bulk execute:', orderIds);
+  }, []);
 
   // Load data
   useEffect(() => {
@@ -97,6 +121,7 @@ const App: React.FC = () => {
             closePercentage: 50,
             isLong: true,
             status: 'active',
+            orderType: 'stop_loss',
             createdAt: Date.now() - 3600000,
             distanceToTrigger: 0,
             estimatedLoss: 0
@@ -111,6 +136,9 @@ const App: React.FC = () => {
             closePercentage: 100,
             isLong: false,
             status: 'active',
+            orderType: 'trailing_stop',
+            trailingDistance: 3,
+            trailingHighWaterMark: 3950,
             createdAt: Date.now() - 1800000,
             distanceToTrigger: 0,
             estimatedLoss: 0
@@ -125,6 +153,9 @@ const App: React.FC = () => {
             closePercentage: 75,
             isLong: true,
             status: 'active',
+            orderType: 'oco',
+            takeProfitPrice: 220,
+            stopLossPrice: 195,
             createdAt: Date.now() - 900000,
             distanceToTrigger: 0,
             estimatedLoss: 0
@@ -140,6 +171,21 @@ const App: React.FC = () => {
 
   const handleRefresh = () => {
     setRefreshKey(prev => prev + 1);
+  };
+
+  // Mock position for order creator
+  const mockPosition: Position = {
+    id: 'pos_demo',
+    user: 'demo_user',
+    market: 'BTC',
+    isLong: true,
+    baseSize: 1.5,
+    entryPrice: 65000,
+    margin: 10000,
+    openTime: Date.now() - 3600000,
+    pnl: 2250,
+    equity: 12250,
+    liquidationPrice: 55000
   };
 
   return (
@@ -179,11 +225,11 @@ const App: React.FC = () => {
               {connected ? 'Wallet Connected' : 'Wallet Disconnected'}
             </div>
             <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-              useRealProtocol 
+              autoExecutionEnabled 
                 ? 'bg-purple-100 text-purple-800' 
                 : 'bg-gray-100 text-gray-600'
             }`}>
-              Protocol: {useRealProtocol ? 'Real Solana' : 'Mock'}
+              Auto-Execution: {autoExecutionEnabled ? 'ON' : 'OFF'}
             </div>
           </div>
 
@@ -192,48 +238,18 @@ const App: React.FC = () => {
             <h3 className="text-xl font-semibold text-gray-900 mb-4">Live Market Prices</h3>
             <RealTimePriceDisplay 
               symbols={['BTC', 'ETH', 'SOL', 'ADA', 'AVAX', 'MATIC', 'DOT', 'LINK', 'UNI']} 
-              method="hybrid"
+              method="coingecko" 
             />
           </div>
 
-          {/* Stop Loss Manager */}
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Stop Loss Orders</h3>
-            <StopLossManager 
-              orders={stopLossOrders}
-              onCreateOrder={async (params) => {
-                const newOrder: StopLossOrder = {
-                  id: `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                  user: 'demo_user',
-                  market: 'BTC', // You might want to make this dynamic
-                  isLong: true, // You might want to make this dynamic
-                  status: 'active',
-                  createdAt: Date.now(),
-                  currentPrice: 66500, // This should be dynamic
-                  distanceToTrigger: 0,
-                  estimatedLoss: 0,
-                  ...params
-                };
-                setStopLossOrders(prev => [...prev, newOrder]);
-              }}
-              onModifyOrder={async (orderId: string, newTriggerPrice: number, newClosePercentage: number) => {
-                setStopLossOrders(prev => 
-                  prev.map(order => 
-                    order.id === orderId 
-                      ? { ...order, triggerPrice: newTriggerPrice, closePercentage: newClosePercentage } 
-                      : order
-                  )
-                );
-              }}
-              onCancelOrder={async (orderId: string) => {
-                setStopLossOrders(prev =>
-                  prev.map(order =>
-                    order.id === orderId ? { ...order, status: 'cancelled' } : order
-                  )
-                );
-              }}
-            />
-          </div>
+          {/* Advanced Order Dashboard */}
+          <OrderDashboard
+            orders={stopLossOrders}
+            onBulkCancel={handleBulkCancel}
+            onBulkExecute={handleBulkExecute}
+            onToggleAutoExecution={setAutoExecutionEnabled}
+            autoExecutionEnabled={autoExecutionEnabled}
+          />
 
           {/* Simple monitoring stats */}
           <div className="bg-white rounded-lg shadow-lg p-6">
@@ -248,12 +264,12 @@ const App: React.FC = () => {
                 <div className="text-sm text-gray-600">Triggered</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-600">{stopLossOrders.filter(o => o.status === 'cancelled').length}</div>
-                <div className="text-sm text-gray-600">Cancelled</div>
+                <div className="text-2xl font-bold text-orange-600">{stopLossOrders.filter(o => o.orderType === 'trailing_stop').length}</div>
+                <div className="text-sm text-gray-600">Trailing Stops</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">{stopLossOrders.length}</div>
-                <div className="text-sm text-gray-600">Total Orders</div>
+                <div className="text-2xl font-bold text-purple-600">{stopLossOrders.filter(o => o.orderType === 'oco').length}</div>
+                <div className="text-sm text-gray-600">OCO Orders</div>
               </div>
             </div>
           </div>          {/* Position Management */}
@@ -355,5 +371,7 @@ const App: React.FC = () => {
         </aside>
       </div>
     </div>
-    );
-  };export default App;
+  );
+};
+
+export default App;

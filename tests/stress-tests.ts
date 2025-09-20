@@ -2,7 +2,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { expect } from "chai";
 
 // Advanced stress testing and edge case validation
-describe("PerpAscent Protocol - Stress Testing & Edge Cases", () => {
+describe("PerpAscend Protocol - Stress Testing & Edge Cases", () => {
 
   it("Should handle extreme market volatility scenarios", () => {
     console.log("\n🔥 STRESS TEST: Extreme Market Volatility");

@@ -10,7 +10,7 @@ import {
 } from "@solana/web3.js";
 
 // Mock implementation of protocol state and logic for complex testing
-class MockPerpAscentProtocol {
+class MockPerpAscendProtocol {
   private markets: Map<string, any> = new Map();
   private positions: Map<string, any> = new Map();
   private config: any = {};
@@ -193,11 +193,11 @@ class MockPerpAscentProtocol {
   }
 }
 
-describe("PerpAscent Protocol - Complex Integration Tests", () => {
-  let protocol: MockPerpAscentProtocol;
+describe("PerpAscend Protocol - Complex Integration Tests", () => {
+  let protocol: MockPerpAscendProtocol;
 
   beforeEach(() => {
-    protocol = new MockPerpAscentProtocol();
+    protocol = new MockPerpAscendProtocol();
   });
 
   it("Should create and manage multiple markets", () => {
