@@ -36,64 +36,67 @@ export const RealTimePriceDisplay: React.FC<RealTimePriceDisplayProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg p-4 shadow">
-        <h3 className="text-lg font-semibold mb-4">Live Prices</h3>
-        <div className="animate-pulse">
-          {symbols.map((_, index) => (
-            <div key={index} className="flex justify-between items-center py-2">
-              <div className="h-4 bg-gray-200 rounded w-20"></div>
-              <div className="h-4 bg-gray-200 rounded w-24"></div>
+      <div className="space-y-4">
+        {symbols.map((_, index) => (
+          <div key={index} className="trading-card shimmer">
+            <div className="flex justify-between items-center">
+              <div className="h-4 bg-trading-bg-hover rounded w-20"></div>
+              <div className="h-6 bg-trading-bg-hover rounded w-24"></div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg p-4 shadow">
-        <h3 className="text-lg font-semibold mb-4 text-red-600">Price Feed Error</h3>
-        <p className="text-sm text-red-500">{error}</p>
+      <div className="trading-card border-loss-500/20 bg-loss-900/5">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="w-8 h-8 rounded-full bg-loss-500/10 flex items-center justify-center">
+            <svg className="w-4 h-4 text-loss-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-loss-500">Price Feed Error</h3>
+        </div>
+        <p className="text-sm text-trading-text-secondary mb-4">{error}</p>
         <button 
           onClick={() => window.location.reload()} 
-          className="mt-2 px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+          className="btn-danger text-sm"
         >
-          Retry
+          Retry Connection
         </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">Live Prices</h3>
-        <div className="flex items-center space-x-2">
-          {/* Simple Status Indicator */}
-          {isUsingEnhanced && (
-            <div className="flex items-center text-xs text-gray-500">
-              <div className={`w-2 h-2 rounded-full mr-1 ${
-                isWebSocketActive ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
-              }`}></div>
-              {isWebSocketActive ? 'Live' : 'Updating'}
-            </div>
-          )}
+    <div className="space-y-6">
+      {/* Header with Status - Only show if we have status info */}
+      {isUsingEnhanced && (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className={isWebSocketActive ? 'status-connected' : 'status-warning'}></div>
+            <span className="text-sm text-trading-text-secondary">
+              {isWebSocketActive ? 'Live Data Stream' : 'Fallback Mode'}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {symbols.map((symbol) => {
           // Look for price data under both the original symbol and symbol/USD format
           const priceData = prices[symbol] || prices[`${symbol}/USD`];
           
           if (!priceData) {
             return (
-              <div key={symbol} className="bg-gray-50 rounded-lg p-4 border">
+              <div key={symbol} className="price-card shimmer">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-900">{symbol}</span>
-                  <div className="text-sm text-gray-400">Loading...</div>
+                  <span className="font-medium text-trading-text-primary">{symbol}</span>
+                  <div className="text-sm text-trading-text-tertiary">Loading...</div>
                 </div>
               </div>
             );
@@ -102,30 +105,48 @@ export const RealTimePriceDisplay: React.FC<RealTimePriceDisplayProps> = ({
           const isPositive = priceData.change24h >= 0;
           
           return (
-            <div key={symbol} className="bg-gray-50 rounded-lg p-4 border hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-bold text-gray-900 text-lg">{symbol}</span>
-                <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  isPositive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                }`}>
-                  {isPositive ? '+' : ''}{priceData.change24h.toFixed(2)}%
-                </div>
-              </div>
+            <div key={symbol} className="price-card group relative overflow-hidden">
+              {/* Gradient border effect for active cards */}
+              <div className="absolute inset-0 bg-gradient-to-r from-trading-accent-primary/10 to-brand-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
               
-              <div className="mb-2">
-                <div className="text-2xl font-bold text-gray-900">
-                  ${priceData.price.toLocaleString(undefined, { 
-                    minimumFractionDigits: 2, 
-                    maximumFractionDigits: priceData.price >= 100 ? 2 : 4
-                  })}
+              <div className="relative z-10">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-2">
+                    <span className="font-bold text-trading-text-primary text-lg">{symbol}</span>
+                    <div className="w-6 h-6 rounded-full bg-trading-bg-secondary flex items-center justify-center">
+                      <span className="text-xs font-mono text-trading-text-secondary">{symbol[0]}</span>
+                    </div>
+                  </div>
+                  <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+                    isPositive ? 'price-positive' : 'price-negative'
+                  }`}>
+                    {isPositive ? '+' : ''}{priceData.change24h.toFixed(2)}%
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex justify-between items-center text-xs text-gray-500">
-                {priceData.volume24h > 0 && (
-                  <span>Vol: ${(priceData.volume24h / 1000000).toFixed(0)}M</span>
-                )}
-                <span>{new Date(priceData.timestamp).toLocaleTimeString()}</span>
+                
+                {/* Price */}
+                <div className="mb-4">
+                  <div className="text-2xl font-bold text-trading-text-primary font-mono">
+                    ${priceData.price.toLocaleString(undefined, { 
+                      minimumFractionDigits: 2, 
+                      maximumFractionDigits: priceData.price >= 100 ? 2 : 4
+                    })}
+                  </div>
+                </div>
+                
+                {/* Footer */}
+                <div className="flex justify-between items-center text-xs">
+                  {priceData.volume24h > 0 && (
+                    <div className="text-trading-text-tertiary">
+                      <span className="text-trading-text-secondary">Vol: </span>
+                      ${(priceData.volume24h / 1000000).toFixed(0)}M
+                    </div>
+                  )}
+                  <div className="text-trading-text-tertiary font-mono">
+                    {new Date(priceData.timestamp).toLocaleTimeString()}
+                  </div>
+                </div>
               </div>
             </div>
           );

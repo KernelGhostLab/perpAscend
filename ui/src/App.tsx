@@ -13,27 +13,38 @@ const Header = () => {
   const { connected, publicKey } = useWallet();
   
   return (
-    <header className="bg-gradient-to-r from-blue-900 to-purple-900 shadow-lg">
+    <header className="header-glass sticky top-0 z-50">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <img 
-              src="/logo.svg" 
-              alt="PerpAscend Protocol" 
-              className="w-8 h-8" 
-            />
-            <h1 className="text-2xl font-bold text-white">PerpAscend Protocol</h1>
-          </div>
           <div className="flex items-center space-x-4">
-            <div className="text-sm text-blue-200">
-              Advanced Solana Perpetual Futures Trading Interface
+            <div className="relative">
+              <img 
+                src="/my-logo.svg" 
+                alt="PerpAscend Protocol" 
+                className="w-10 h-10 float relative z-10" 
+              />
+              <div className="absolute -inset-1 bg-gradient-to-r from-trading-accent-primary to-brand-500 rounded-full opacity-20 blur"></div>
             </div>
-            {connected && publicKey && (
-              <div className="text-xs text-green-300">
-                Connected: {publicKey.toString().slice(0, 4)}...{publicKey.toString().slice(-4)}
+            <div>
+              <h1 className="text-2xl font-bold gradient-text">PerpAscend Protocol</h1>
+              <div className="text-xs text-trading-text-tertiary">Advanced Perpetual Futures Platform</div>
+            </div>
+          </div>
+          <div className="flex items-center space-x-6">
+            <div className="hidden md:flex items-center space-x-4">
+              <div className="text-sm text-trading-text-secondary font-medium">
+                Solana Network
               </div>
-            )}
-            <WalletMultiButton />
+              {connected && publicKey && (
+                <div className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-trading-bg-secondary border border-trading-border-accent">
+                  <div className="status-connected"></div>
+                  <span className="text-xs font-mono text-trading-text-primary">
+                    {publicKey.toString().slice(0, 4)}...{publicKey.toString().slice(-4)}
+                  </span>
+                </div>
+              )}
+            </div>
+            <WalletMultiButton className="!bg-gradient-to-r !from-trading-accent-primary !to-brand-500 !border-0 !rounded-xl !font-medium hover:!scale-105 !transition-all !duration-300" />
           </div>
         </div>
       </div>
@@ -143,53 +154,74 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-trading-bg-primary">
       <Header />
       
       <div className="flex">
         {/* Main Content */}
-        <main className="flex-1 p-6 space-y-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-3xl font-bold text-gray-900">Advanced Trading Dashboard</h2>
-            <button 
-              onClick={handleRefresh}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span>Refresh</span>
-            </button>
+        <main className="flex-1 p-6 space-y-8 custom-scrollbar overflow-y-auto max-h-screen">
+          {/* Dashboard Header */}
+          <div className="flex items-center justify-between animate-slide-down">
+            <div>
+              <h2 className="text-responsive-2xl font-bold text-trading-text-primary mb-2">Trading Dashboard</h2>
+              <p className="text-trading-text-secondary">Professional perpetual futures trading interface</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button 
+                onClick={handleRefresh}
+                className="btn-secondary flex items-center space-x-2 group"
+              >
+                <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Refresh</span>
+              </button>
+            </div>
           </div>
 
           {/* Protocol Status */}
-          <div className="flex items-center space-x-4">
-            <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+          <div className="flex items-center space-x-4 animate-fade-in">
+            <div className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-300 ${
               useRealProtocol 
-                ? 'bg-green-100 text-green-800' 
-                : 'bg-blue-100 text-blue-800'
+                ? 'bg-profit-900/10 text-profit-500 border-profit-500/20' 
+                : 'bg-brand-900/10 text-brand-400 border-brand-500/20'
             }`}>
-              {useRealProtocol ? 'Real Solana Protocol' : 'Mock Protocol (Development)'}
+              <div className="flex items-center space-x-2">
+                <div className={`status-dot ${useRealProtocol ? 'bg-profit-500' : 'bg-brand-400'}`}></div>
+                <span>{useRealProtocol ? 'Live Protocol' : 'Demo Mode'}</span>
+              </div>
             </div>
-            <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+            <div className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-300 ${
               connected 
-                ? 'bg-green-100 text-green-800' 
-                : 'bg-red-100 text-red-800'
+                ? 'bg-profit-900/10 text-profit-500 border-profit-500/20' 
+                : 'bg-loss-900/10 text-loss-500 border-loss-500/20'
             }`}>
-              {connected ? 'Wallet Connected' : 'Wallet Disconnected'}
+              <div className="flex items-center space-x-2">
+                <div className={connected ? 'status-connected' : 'status-disconnected'}></div>
+                <span>{connected ? 'Wallet Connected' : 'Wallet Disconnected'}</span>
+              </div>
             </div>
-            <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+            <div className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-300 ${
               useRealProtocol 
-                ? 'bg-purple-100 text-purple-800' 
-                : 'bg-gray-100 text-gray-600'
+                ? 'bg-trading-accent-secondary/10 text-trading-accent-secondary border-trading-accent-secondary/20' 
+                : 'bg-trading-text-tertiary/10 text-trading-text-tertiary border-trading-border-primary'
             }`}>
-              Protocol: {useRealProtocol ? 'Real Solana' : 'Mock'}
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-current rounded-full opacity-60"></div>
+                <span>Protocol: {useRealProtocol ? 'Solana Mainnet' : 'Local Mock'}</span>
+              </div>
             </div>
           </div>
 
           {/* Real-Time Price Display */}
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Live Market Prices</h3>
+          <div className="trading-card-glass animate-slide-up">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-trading-text-primary">Live Market Prices</h3>
+              <div className="flex items-center space-x-2 text-sm text-trading-text-secondary">
+                <div className="status-connected"></div>
+                <span>Real-time data</span>
+              </div>
+            </div>
             <RealTimePriceDisplay 
               symbols={['BTC', 'ETH', 'SOL', 'ADA', 'AVAX', 'MATIC', 'DOT', 'LINK', 'UNI']} 
               method="hybrid"
