@@ -42,7 +42,7 @@ A next-generation **open source permissionless perpetual futures platform** buil
 ### Quick Setup
 ```bash
 # Clone the repository
-git clone https://github.com/onchaincreator/PerpAscend-Protocol.git
+git clone https://github.com/KernelGhostLab/perpAscend.git
 
 # Install dependencies
 npm install

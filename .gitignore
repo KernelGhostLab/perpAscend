@@ -122,3 +122,5 @@ public
 
 # Temporary TypeScript files
 *.d.ts.map
+PRODUCTION_READINESS.md
+.github/workflows/ui-tests.yml
