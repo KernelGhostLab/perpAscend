@@ -1,0 +1,19 @@
+[toolchain]
+anchor_version = "0.31.1"
+
+[programs.localnet]
+solana_perps_flywheel = "HSMR7nCvy29baTVaZRUafxZXU9UhfeFrmFtRSJW3r1gj"
+
+[programs.devnet]
+solana_perps_flywheel = "HSMR7nCvy29baTVaZRUafxZXU9UhfeFrmFtRSJW3r1gj"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+build = "anchor build"
+test = "anchor test"
