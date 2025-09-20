@@ -6,6 +6,7 @@ import { useRealSolanaProtocol } from './lib/realSolanaProtocol';
 import { ProtocolSwitcher } from './components/ProtocolSwitcher';
 import { AdvancedPositionManager } from './components/AdvancedPositionManager';
 import { StopLossManager } from './components/StopLossManager';
+import { RealTimePriceDisplay } from './components/RealTimePriceDisplay';
 
 // Header Component
 const Header = () => {
@@ -195,6 +196,15 @@ const App: React.FC = () => {
                   {connected ? 'Wallet Connected' : 'Wallet Disconnected'}
                 </div>
               </div>
+            </div>
+
+            {/* Real-Time Price Display */}
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Live Market Prices</h3>
+              <RealTimePriceDisplay 
+                symbols={['BTC', 'ETH', 'SOL', 'ADA', 'AVAX', 'MATIC', 'DOT', 'LINK', 'UNI']} 
+                method="coingecko" 
+              />
             </div>
 
             <StatsGrid />
